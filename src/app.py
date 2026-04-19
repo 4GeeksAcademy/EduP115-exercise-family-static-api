@@ -52,6 +52,19 @@ def get_single_member(id):
 @app.route('/members', methods=['POST'])
 def handle_post():
     data = request.get_json()
+    if not data:
+        return jsonify({"message": "Invalid JSON"}), 400
+    
+    # Validate required fields
+    if "first_name" not in data or not isinstance(data["first_name"], str) or not data["first_name"].strip():
+        return jsonify({"message": "first_name is required and must be a non-empty string"}), 400
+    
+    if "age" not in data or not isinstance(data["age"], int) or data["age"] <= 0:
+        return jsonify({"message": "age is required and must be a positive integer"}), 400
+    
+    if "lucky_numbers" not in data or not isinstance(data["lucky_numbers"], list) or not all(isinstance(num, int) for num in data["lucky_numbers"]):
+        return jsonify({"message": "lucky_numbers is required and must be a list of integers"}), 400
+    
     new_member = jackson_family.add_member(data) 
     return jsonify(new_member), 200
 
