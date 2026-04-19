@@ -5,41 +5,73 @@ Update this file to implement the following already declared methods:
 - get_member: Should return a member from the self._members list
 """
 
-from random import randint
 
 class FamilyStructure:
     def __init__(self, last_name):
         self.last_name = last_name
         self._next_id = 1
-        self._members = []
+        self._members = [
+            {
+                "id": self._generate_id(),
+                "first_name": "John",
+                "last_name": last_name,
+                "age": 33,
+                "lucky_numbers": [7, 13, 22]
+            },
+            {
+                "id": self._generate_id(),
+                "first_name": "Jane",
+                "last_name": last_name,
+                "age": 35,
+                "lucky_numbers": [10, 14, 3]
+            },
+            {
+                "id": self._generate_id(),
+                "first_name": "Jimmy",
+                "last_name": last_name,
+                "age": 5,
+                "lucky_numbers": [1]
+            } 
+        ]
 
-    # read-only: Use this method to generate random members ID's when adding members into the list
-    def _generate_Id(self):
-        generated_Id = self._next_id
+    # This method generates a unique incremental ID
+    def _generate_id(self):
+        generated_id = self._next_id
         self._next_id += 1
-        return generated_Id
+        return generated_id
 
     def add_member(self, member):
-        new_id = self._generate_Id()
-        member["id"] = new_id
+        # You have to implement this method
+        # Append the member to the list of _members
+        if "id" not in member:
+            member['id'] = self._generate_id()
+
+        if 'last_name' not in member:
+            member['last_name'] = self.last_name
+
+        # Always append the member and return it
         self._members.append(member)
-        # fill this method and update the return
-        return f"{member} fue agregado a la familia exitosamente con el id {new_id}"
+        return member
+    
 
     def delete_member(self, id):
-        for index, member in enumerate(self._members):
-            if member["id"] == id:
-                self._members.pop(index)
-                return f"{id} fue eliminado de la familia exitosamente"
-        # fill this method and update the return
-        return "Miembro no encontrado"
+        # You have to implement this method
+        # Loop the list and delete the member with the given id
+        for i, member in enumerate(self._members):
+            if member.get("id") == id:
+                del self._members[i]
+                return True
+        return False
 
     def get_member(self, id):
+        # You have to implement this method
+        # Loop all the members and return the one with the given id
         for member in self._members:
             if member["id"] == id:
                 return member
         return None
+        pass
 
-    # this method is done, it returns a list with all the family members
+    # This method is done, it returns a list with all the family members
     def get_all_members(self):
         return self._members

@@ -35,52 +35,34 @@ def handle_hello():
     members = jackson_family.get_all_members()
     response_body = {"hello": "world",
                      "family": members}
-    return jsonify(response_body), 200
+    return jsonify(members), 200
 
-
-# Ruta para el metodo post
-@app.route('/members', methods=['POST'])
-def add_members():
-    data = request.get_json()
-    new_member = jackson_family.add_member(data)
-
-    if new_member is True:
-        return jsonify({'code': 'realizado con exito'}), 200
-    elif new_member is False:
-        return jsonify({'code': 'error por parte del cliente'}), 400
+                # miembro por id
+@app.route('/members/<int:id>', methods=['GET'])
+def get_single_member(id):
+    member = jackson_family.get_member(id)
+    if member:
+        return jsonify(member), 200
     else:
-        return jsonify({'code': 'error en el servidor'}), 500
+        return jsonify({"message": "Member not found"}), 404
 
 
-# Ruta para el metodo delete
+
+
+@app.route('/members', methods=['POST'])
+def handle_post():
+    data = request.get_json()
+    new_member = jackson_family.add_member(data) 
+    return jsonify(new_member), 200
+
+
 @app.route('/members/<int:id>', methods=['DELETE'])
 def delete_member(id):
-    result = jackson_family.delete_member(id)
-
-    if result is True:
+    success = jackson_family.delete_member(id)
+    if success:
         return jsonify({"done": True}), 200
-    elif result is False:
-        return jsonify({"done": False, "error": "Miembro no encontrado"}), 404
     else:
-        return jsonify({"done": False, "error": "Error interno del servidor"}), 400
-
-
-# Ruta para el metodo Get_id
-@app.route('/members/<int:id>', methods=['GET'])
-def get_member(id):
-    result = jackson_family.get_member(id)
-    
-    if result is False:
-        return jsonify({"error": "Miembro no encontrado"}), 404
-    elif result is None:
-        return jsonify({"error": "Error interno del servidor"}), 500
-    else:
-        return jsonify({
-            "id": result["id"],
-            "first_name": result["first_name"],
-            "age": result["age"],
-            "lucky_numbers": result["lucky_numbers"]
-        }), 200
+        return jsonify({"message": "Member not found"}), 404
 
 
 # This only runs if `$ python src/app.py` is executed
